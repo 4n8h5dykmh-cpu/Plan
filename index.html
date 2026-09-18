@@ -1,0 +1,95 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>우리의 결혼 준비</title>
+<style>
+:root{--bg:#f7f5f3;--card:#fff;--ink:#2d2926;--muted:#8b817b;--line:#e9e2de;--accent:#b78f83;--soft:#f1e8e4;--ok:#708b76}
+*{box-sizing:border-box} body{margin:0;background:var(--bg);color:var(--ink);font-family:-apple-system,BlinkMacSystemFont,"Apple SD Gothic Neo","Noto Sans KR",sans-serif}
+.app{max-width:720px;margin:auto;min-height:100vh;padding:22px 16px 92px}.top{display:flex;justify-content:space-between;align-items:center;margin-bottom:16px}.top h1{font-size:22px;margin:0}.pill{background:var(--soft);padding:8px 11px;border-radius:99px;font-size:12px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:20px;padding:17px;margin-bottom:14px;box-shadow:0 5px 18px #4933260a}
+.row{display:flex;align-items:center;justify-content:space-between;gap:10px}.muted{color:var(--muted);font-size:13px}.big{font-size:25px;font-weight:800}.btn{border:0;background:var(--ink);color:#fff;border-radius:12px;padding:10px 13px;font-weight:700}.ghost{background:var(--soft);color:var(--ink)}
+.calhead{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px}.calhead button{border:0;background:none;font-size:22px}.week,.days{display:grid;grid-template-columns:repeat(7,1fr);text-align:center}.week{font-size:12px;color:var(--muted);margin-bottom:5px}.day{min-height:50px;padding:7px 2px;border-radius:12px;position:relative;cursor:pointer}.day.today{background:var(--soft);font-weight:800}.day.sel{outline:2px solid var(--accent)}.dot{width:5px;height:5px;border-radius:50%;background:var(--accent);position:absolute;bottom:6px;left:50%}
+h2{font-size:17px;margin:5px 2px 12px}.task{padding:13px 2px;border-bottom:1px solid var(--line)}.task:last-child{border:0}.status{border:0;border-radius:10px;padding:7px;background:var(--soft)}
+.month{overflow:hidden;padding:0}.monthTitle{padding:16px 17px;cursor:pointer;font-weight:800}.monthBody{padding:0 17px 8px}.itemline{display:grid;grid-template-columns:58px 1fr auto;gap:8px;align-items:center;padding:12px 0;border-top:1px solid var(--line);cursor:pointer}.detail{grid-column:1/-1;background:#faf8f7;border-radius:12px;padding:12px;margin-top:3px;font-size:13px;line-height:1.7}
+input,select,textarea{width:100%;border:1px solid var(--line);background:#fff;border-radius:11px;padding:11px;font:inherit}label{display:block;font-size:12px;color:var(--muted);margin:11px 0 5px}.modal{position:fixed;inset:0;background:#0005;display:none;align-items:flex-end;justify-content:center;z-index:20}.sheet{background:#fff;width:min(720px,100%);max-height:88vh;overflow:auto;border-radius:24px 24px 0 0;padding:20px}.actions{display:flex;gap:8px;margin-top:16px}.actions>*{flex:1}
+.budgetGrid{display:grid;grid-template-columns:1fr 1fr;gap:10px}.stat{background:#faf8f7;border-radius:15px;padding:14px}.stat.full{grid-column:1/-1}.progress{height:8px;background:#eee8e5;border-radius:99px;overflow:hidden;margin-top:9px}.progress i{display:block;height:100%;background:var(--accent)}
+.account{display:flex;justify-content:space-between;padding:13px 0;border-bottom:1px solid var(--line)}.account:last-child{border:0}.money{font-weight:800}
+.nav{position:fixed;bottom:0;left:0;right:0;background:#fffc;border-top:1px solid var(--line);backdrop-filter:blur(15px);display:flex;justify-content:center;z-index:10}.navin{width:min(720px,100%);display:grid;grid-template-columns:repeat(3,1fr);padding:7px 8px calc(7px + env(safe-area-inset-bottom))}.nav button{border:0;background:none;padding:9px;font-weight:700;color:var(--muted)}.nav button.on{color:var(--ink)}
+.page{display:none}.page.on{display:block}.empty{text-align:center;color:var(--muted);padding:22px 4px}.tinybtn{border:0;background:none;color:var(--muted);padding:5px}
+</style></head>
+<body><main class="app">
+<section id="home" class="page on">
+ <div class="top"><h1>💍 우리의 결혼 준비</h1><span class="pill">Wedding Planner</span></div>
+ <div class="card"><div class="calhead"><button onclick="moveMonth(-1)">‹</button><b id="calTitle"></b><button onclick="moveMonth(1)">›</button></div><div class="week"><span>일</span><span>월</span><span>화</span><span>수</span><span>목</span><span>금</span><span>토</span></div><div class="days" id="days"></div></div>
+ <div id="selectedBox" class="card" style="display:none"></div>
+ <h2>📌 진행 중</h2><div class="card" id="ongoing"></div>
+</section>
+
+<section id="schedule" class="page">
+ <div class="top"><h1>📋 결혼 준비 일정</h1><button class="btn" onclick="openTask()">+ 추가</button></div>
+ <div id="months"></div>
+</section>
+
+<section id="money" class="page">
+ <div class="top"><h1>💰 결혼 가계부</h1><button class="btn ghost" onclick="openBudget()">예산 설정</button></div>
+ <div class="card budgetGrid">
+  <div class="stat full"><div class="muted">총 예산</div><div class="big" id="budgetTotal">0원</div><div class="progress"><i id="budgetBar"></i></div></div>
+  <div class="stat"><div class="muted">현재까지 사용</div><div class="money" id="spent">0원</div></div>
+  <div class="stat"><div class="muted">남은 예산</div><div class="money" id="remaining">0원</div></div>
+ </div>
+ <h2>🏦 우리 계좌</h2><div class="card"><div class="account"><div>저축통장<div class="muted">결혼자금 저축</div></div><div><span class="money" id="savingBal"></span> <button class="tinybtn" onclick="editAccount('saving')">수정</button></div></div><div class="account"><div>입출금통장<div class="muted">실제 결제용</div></div><div><span class="money" id="checkingBal"></span> <button class="tinybtn" onclick="editAccount('checking')">수정</button></div></div><div class="account"><b>총 보유금액</b><b id="accountTotal"></b></div><button class="btn ghost" style="width:100%;margin-top:12px" onclick="transfer()">저축 → 입출금 이체</button></div>
+ <div class="row"><h2>💳 결제 내역</h2><button class="btn" onclick="openExpense()">+ 추가</button></div><div id="expenses"></div>
+</section>
+</main>
+
+<nav class="nav"><div class="navin"><button class="on" onclick="showPage('home',this)">🏠<br>홈</button><button onclick="showPage('schedule',this)">📋<br>일정</button><button onclick="showPage('money',this)">💰<br>가계부</button></div></nav>
+
+<div class="modal" id="taskModal"><div class="sheet"><h2>일정 추가</h2><label>제목</label><input id="tTitle"><label>날짜</label><input type="date" id="tDate"><label>시간 (선택)</label><input type="time" id="tTime"><label>카테고리</label><input id="tCat" placeholder="예: 웨딩홀, 예물, 드레스"><label>상태</label><select id="tStatus"><option>선택</option><option>진행중</option><option>완료</option></select><label>메모 (선택)</label><textarea id="tMemo" rows="3"></textarea><div class="actions"><button class="btn ghost" onclick="closeM('taskModal')">취소</button><button class="btn" onclick="saveTask()">저장</button></div></div></div>
+<div class="modal" id="expenseModal"><div class="sheet"><h2>지출 추가</h2><label>항목</label><input id="eTitle"><label>카테고리</label><input id="eCat" placeholder="예: 웨딩홀, 스드메, 예물"><label>날짜</label><input type="date" id="eDate"><label>금액</label><input type="number" id="eAmount" inputmode="numeric"><label>결제 방법</label><select id="eSource"><option value="checking">입출금통장</option><option value="saving">저축통장</option><option value="me">내가 결제</option><option value="partner">신랑이 결제</option></select><label>메모 (선택)</label><textarea id="eMemo" rows="3"></textarea><div class="actions"><button class="btn ghost" onclick="closeM('expenseModal')">취소</button><button class="btn" onclick="saveExpense()">저장</button></div></div></div>
+
+<script>
+const calTitle=document.getElementById('calTitle');
+const days=document.getElementById('days');
+const selectedBox=document.getElementById('selectedBox');
+const ongoing=document.getElementById('ongoing');
+const months=document.getElementById('months');
+const budgetTotal=document.getElementById('budgetTotal');
+const budgetBar=document.getElementById('budgetBar');
+const remaining=document.getElementById('remaining');
+const savingBal=document.getElementById('savingBal');
+const checkingBal=document.getElementById('checkingBal');
+const accountTotal=document.getElementById('accountTotal');
+const expenses=document.getElementById('expenses');
+const taskModal=document.getElementById('taskModal');
+const expenseModal=document.getElementById('expenseModal');
+const tTitle=document.getElementById('tTitle');
+const tDate=document.getElementById('tDate');
+const tTime=document.getElementById('tTime');
+const tCat=document.getElementById('tCat');
+const tStatus=document.getElementById('tStatus');
+const tMemo=document.getElementById('tMemo');
+const eTitle=document.getElementById('eTitle');
+const eCat=document.getElementById('eCat');
+const eDate=document.getElementById('eDate');
+const eAmount=document.getElementById('eAmount');
+const eSource=document.getElementById('eSource');
+const eMemo=document.getElementById('eMemo');
+function localDateString(d){let y=d.getFullYear(),m=String(d.getMonth()+1).padStart(2,'0'),day=String(d.getDate()).padStart(2,'0');return `${y}-${m}-${day}`}
+const K={tasks:'wed_tasks_v1',money:'wed_money_v1'}; let tasks=JSON.parse(localStorage.getItem(K.tasks)||'[]'); let money=JSON.parse(localStorage.getItem(K.money)||'{"budget":0,"saving":0,"checking":0,"expenses":[]}');
+let view=new Date(), selected=null; const won=n=>(Number(n)||0).toLocaleString('ko-KR')+'원';
+function persist(){localStorage.setItem(K.tasks,JSON.stringify(tasks));localStorage.setItem(K.money,JSON.stringify(money))}
+function showPage(id,b){document.querySelectorAll('.page').forEach(x=>x.classList.remove('on'));document.getElementById(id).classList.add('on');document.querySelectorAll('.nav button').forEach(x=>x.classList.remove('on'));b.classList.add('on');renderAll()}
+function renderCal(){let y=view.getFullYear(),m=view.getMonth();calTitle.textContent=`${y}년 ${m+1}월`;let first=new Date(y,m,1).getDay(),last=new Date(y,m+1,0).getDate();days.innerHTML='';for(let i=0;i<first;i++)days.innerHTML+='<div></div>';for(let d=1;d<=last;d++){let ds=`${y}-${String(m+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`,has=tasks.some(t=>t.date===ds);days.innerHTML+=`<div class="day ${selected===ds?'sel':''}" onclick="selectDay('${ds}')">${d}${has?'<i class="dot"></i>':''}</div>`}}
+function moveMonth(n){view=new Date(view.getFullYear(),view.getMonth()+n,1);renderCal()} function selectDay(d){selected=d;renderCal();let a=tasks.filter(t=>t.date===d);selectedBox.style.display='block';selectedBox.innerHTML=`<b>${d}</b>`+(a.length?a.map(t=>`<div class="task">${t.time?t.time+' · ':''}${t.title} <span class="muted">${t.status}</span></div>`).join(''):'<div class="empty">등록된 일정이 없어요.</div>')}
+function renderOngoing(){let a=tasks.filter(t=>t.status==='진행중').sort((a,b)=>a.date.localeCompare(b.date));ongoing.innerHTML=a.length?a.map(t=>`<div class="task"><div class="row"><b>${t.title}</b><span class="pill">진행중</span></div><div class="muted">${t.date}${t.time?' · '+t.time:''}</div></div>`).join(''):'<div class="empty">진행 중인 일정이 없어요.</div>'}
+function renderMonths(){let g={};tasks.slice().sort((a,b)=>a.date.localeCompare(b.date)).forEach(t=>(g[t.date.slice(0,7)]??=[]).push(t));months.innerHTML=Object.keys(g).length?Object.entries(g).map(([ym,a],i)=>`<div class="card month"><div class="monthTitle" onclick="this.nextElementSibling.hidden=!this.nextElementSibling.hidden">⌄ ${ym.slice(0,4)}년 ${+ym.slice(5)}월 <span class="muted">(${a.length})</span></div><div class="monthBody" ${i?'hidden':''}>${a.map(t=>`<div class="itemline" onclick="toggleDetail(event,this)"><span>${t.date.slice(5).replace('-','.')}</span><b>${t.title}</b><select class="status" onclick="event.stopPropagation()" onchange="setStatus('${t.id}',this.value)"><option ${t.status==='선택'?'selected':''}>선택</option><option ${t.status==='진행중'?'selected':''}>진행중</option><option ${t.status==='완료'?'selected':''}>완료</option></select><div class="detail" hidden>${t.time?'<b>시간</b> '+t.time+'<br>':''}${t.cat?'<b>카테고리</b> '+t.cat+'<br>':''}${t.memo?'<b>메모</b><br>'+t.memo.replace(/\n/g,'<br>'):''}<div style="margin-top:8px"><button class="tinybtn" onclick="event.stopPropagation();deleteTask('${t.id}')">삭제</button></div></div></div>`).join('')}</div></div>`).join(''):'<div class="card empty">아직 등록된 일정이 없어요.</div>'}
+function toggleDetail(e,el){let d=el.querySelector('.detail');d.hidden=!d.hidden} function setStatus(id,v){tasks.find(t=>t.id===id).status=v;persist();renderAll()} function deleteTask(id){if(confirm('이 일정을 삭제할까요?')){tasks=tasks.filter(t=>t.id!==id);persist();renderAll()}}
+function openTask(){tDate.value=localDateString(new Date());taskModal.style.display='flex'} function closeM(id){document.getElementById(id).style.display='none'}
+function saveTask(){if(!tTitle.value||!tDate.value)return alert('제목과 날짜를 입력해 주세요.');tasks.push({id:Date.now().toString(),title:tTitle.value,date:tDate.value,time:tTime.value,cat:tCat.value,status:tStatus.value,memo:tMemo.value});['tTitle','tTime','tCat','tMemo'].forEach(id=>document.getElementById(id).value='');persist();closeM('taskModal');renderAll()}
+function renderMoney(){let spent=money.expenses.reduce((s,e)=>s+Number(e.amount),0),rem=money.budget-spent;budgetTotal.textContent=won(money.budget);document.getElementById('spent').textContent=won(spent);remaining.textContent=won(rem);budgetBar.style.width=(money.budget?Math.min(100,spent/money.budget*100):0)+'%';savingBal.textContent=won(money.saving);checkingBal.textContent=won(money.checking);accountTotal.textContent=won(money.saving+money.checking);let g={};money.expenses.slice().sort((a,b)=>b.date.localeCompare(a.date)).forEach(e=>(g[e.cat||'기타']??=[]).push(e));expenses.innerHTML=Object.keys(g).length?Object.entries(g).map(([c,a])=>`<div class="card month"><div class="monthTitle" onclick="this.nextElementSibling.hidden=!this.nextElementSibling.hidden">⌄ ${c} <span class="muted">${won(a.reduce((s,e)=>s+Number(e.amount),0))}</span></div><div class="monthBody">${a.map(e=>`<div class="itemline"><span>${e.date.slice(5).replace('-','.')}</span><b>${e.title}</b><span class="money">${won(e.amount)}</span></div>`).join('')}</div></div>`).join(''):'<div class="card empty">아직 결제 내역이 없어요.</div>'}
+function openBudget(){let v=prompt('총 결혼 예산을 입력해 주세요. (원)',money.budget||'');if(v!==null&&!isNaN(v)){money.budget=Number(v);persist();renderMoney()}} function editAccount(k){let v=prompt(k==='saving'?'저축통장 현재 잔액':'입출금통장 현재 잔액',money[k]);if(v!==null&&!isNaN(v)){money[k]=Number(v);persist();renderMoney()}}
+function transfer(){let v=Number(prompt('저축통장에서 입출금통장으로 옮길 금액',''));if(v>0){if(v>money.saving)return alert('저축통장 잔액보다 커요.');money.saving-=v;money.checking+=v;persist();renderMoney()}}
+function openExpense(){eDate.value=localDateString(new Date());expenseModal.style.display='flex'} function saveExpense(){let a=Number(eAmount.value);if(!eTitle.value||!eDate.value||!a)return alert('항목, 날짜, 금액을 입력해 주세요.');let src=eSource.value;if((src==='saving'||src==='checking')&&money[src]<a&&!confirm('계좌 잔액보다 큰 지출입니다. 그래도 저장할까요?'))return;if(src==='saving'||src==='checking')money[src]-=a;money.expenses.push({id:Date.now().toString(),title:eTitle.value,cat:eCat.value,date:eDate.value,amount:a,source:src,memo:eMemo.value});['eTitle','eCat','eAmount','eMemo'].forEach(id=>document.getElementById(id).value='');persist();closeM('expenseModal');renderAll()}
+function renderAll(){renderCal();renderOngoing();renderMonths();renderMoney()} renderAll();
+</script></body></html>
