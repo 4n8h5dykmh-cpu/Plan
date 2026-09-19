@@ -30,7 +30,7 @@ input,select,textarea{width:100%;border:1px solid var(--line);background:#fff;bo
 .authIcon{font-size:42px;margin-bottom:6px}.authCard h1{font-size:19px;margin:4px 0 8px}.authCard p{color:var(--muted);font-size:10px;margin:0 0 16px}
 .googleBtn{width:100%;border:0;background:var(--ink);color:#fff;border-radius:12px;padding:10px 12px;font-weight:800;font-size:11px}
 .authError{color:var(--danger);font-size:9px;line-height:1.5;margin-top:10px;min-height:18px}
-.authBar{display:flex;align-items:center;justify-content:space-between;gap:8px;background:#fff;border:1px solid var(--line);border-radius:13px;padding:8px 10px;margin-bottom:10px}
+.authBar{display:none!important}.syncTop{font-size:9px;color:var(--muted);text-align:right;margin:0 2px 6px;line-height:1.2}.syncTop.error{color:var(--danger)}
 .authEmail{font-size:11px;font-weight:800;max-width:220px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .authUid{font-size:8px;color:var(--muted);margin-top:2px;max-width:230px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .authBtns{display:flex;gap:4px;flex-shrink:0}.syncStatus{font-size:9px;color:var(--accent);margin-top:2px}
@@ -53,12 +53,12 @@ input,select,textarea{width:100%;border:1px solid var(--line);background:#fff;bo
   </div>
 </div>
 <main class="app" id="appRoot" style="display:none">
+<div class="syncTop" id="syncStatus">동기화 준비 중</div>
 
 <div class="authBar" id="authBar">
   <div>
     <div class="authEmail" id="authEmail"></div>
     <div class="authUid">UID <span id="authUid"></span></div>
-<div class="syncStatus" id="syncStatus">동기화 준비 중</div>
   </div>
   <div class="authBtns">
     <button class="mini" onclick="copyUid()">UID 복사</button>
@@ -75,6 +75,7 @@ input,select,textarea{width:100%;border:1px solid var(--line);background:#fff;bo
 
 <section id="schedule" class="page">
   <div class="top"><h1>📋 결혼 준비 일정</h1><button class="btn" onclick="openTask()">+ 추가</button></div>
+  <div id="anytimeTasks"></div>
   <div id="months"></div>
 </section>
 
@@ -281,7 +282,9 @@ function persist(){
 }
 function setSyncStatus(msg){
   const el=document.getElementById('syncStatus');
-  if(el)el.textContent=msg;
+  if(!el)return;
+  el.textContent=msg;
+  el.classList.toggle('error',/오류|실패|권한/.test(msg));
 }
 function cloudPayload(){
   return {
@@ -401,35 +404,73 @@ function migrateMoney(){
 /* 달력/일정 */
 function taskParts(t){
   const raw=String(t.date||'');
-  const year=String(t.year||raw.slice(0,4)||new Date().getFullYear());
-  const month=String(t.month||raw.slice(5,7)||String(new Date().getMonth()+1).padStart(2,'0')).padStart(2,'0');
-  const day=String(t.day||(raw.length===10?raw.slice(8,10):''));
-  return {year,month,day,ym:`${year}-${month}`,date:day?`${year}-${month}-${day}`:`${year}-${month}`};
+  let year=String(t.year||'');
+  let month=String(t.month||'');
+  let day=String(t.day||'');
+
+  // 기존 데이터 호환
+  if(!year && raw.length>=7)year=raw.slice(0,4);
+  if(!month && raw.length>=7)month=raw.slice(5,7);
+  if(!day && raw.length===10)day=raw.slice(8,10);
+
+  const anytime=(!year && !month) || t.anytime===true;
+  if(anytime)return {year:'',month:'',day:'',ym:'',date:'',anytime:true};
+
+  month=month?month.padStart(2,'0'):'';
+  day=day?day.padStart(2,'0'):'';
+  const ym=(year&&month)?`${year}-${month}`:'';
+  const date=(ym&&day)?`${ym}-${day}`:ym;
+  return {year,month,day,ym,date,anytime:false};
 }
 function taskYM(t){return taskParts(t).ym}
-function taskExactDate(t){const p=taskParts(t);return p.day?p.date:''}
+function taskExactDate(t){const p=taskParts(t);return (!p.anytime&&p.day)?p.date:''}
 function taskDateText(t){
   const p=taskParts(t);
+  if(p.anytime)return '상시 일정';
   return p.day?`${p.year}.${+p.month}.${+p.day}`:`${p.year}년 ${+p.month}월 · 날짜 미정`;
 }
-function taskDayText(t){const p=taskParts(t);return p.day?`${+p.day}일`:'미정'}
+function taskDayText(t){
+  const p=taskParts(t);
+  if(p.anytime)return '상시';
+  return p.day?`${+p.day}일`:'미정';
+}
 function taskSortKey(t){
   const p=taskParts(t);
+  if(p.anytime)return '0000-00-00';
   return `${p.ym}-${p.day||'00'}`;
 }
 function daysInMonth(y,m){return new Date(Number(y),Number(m),0).getDate()}
-function populateTaskDateSelectors(year,month,day=''){
+function populateTaskDateSelectors(year='',month='',day=''){
   const now=new Date(),start=now.getFullYear()-1,end=now.getFullYear()+6;
-  $('tYear').innerHTML=Array.from({length:end-start+1},(_,i)=>start+i).map(y=>`<option value="${y}">${y}년</option>`).join('');
-  $('tMonth').innerHTML=Array.from({length:12},(_,i)=>String(i+1).padStart(2,'0')).map(m=>`<option value="${m}">${+m}월</option>`).join('');
-  $('tYear').value=String(year||now.getFullYear());
-  $('tMonth').value=String(month||String(now.getMonth()+1).padStart(2,'0')).padStart(2,'0');
+
+  $('tYear').innerHTML='<option value="">연도 선택</option>'+
+    Array.from({length:end-start+1},(_,i)=>start+i)
+      .map(y=>`<option value="${y}">${y}년</option>`).join('');
+
+  $('tMonth').innerHTML='<option value="">월 선택</option>'+
+    Array.from({length:12},(_,i)=>String(i+1).padStart(2,'0'))
+      .map(m=>`<option value="${m}">${+m}월</option>`).join('');
+
+  $('tYear').value=year?String(year):'';
+  $('tMonth').value=month?String(month).padStart(2,'0'):'';
   updateTaskDayOptions(day);
 }
 function updateTaskDayOptions(keep=''){
-  const y=$('tYear').value,m=$('tMonth').value,max=daysInMonth(y,m);
-  $('tDay').innerHTML='<option value="">날짜 미정</option>'+Array.from({length:max},(_,i)=>i+1).map(d=>`<option value="${String(d).padStart(2,'0')}">${d}일</option>`).join('');
-  if(keep && Number(keep)<=max)$('tDay').value=String(keep).padStart(2,'0'); else $('tDay').value='';
+  const y=$('tYear').value,m=$('tMonth').value;
+
+  if(!y || !m){
+    $('tDay').innerHTML='<option value="">일 선택</option>';
+    $('tDay').value='';
+    return;
+  }
+
+  const max=daysInMonth(y,m);
+  $('tDay').innerHTML='<option value="">날짜 미정</option>'+
+    Array.from({length:max},(_,i)=>i+1)
+      .map(d=>`<option value="${String(d).padStart(2,'0')}">${d}일</option>`).join('');
+
+  if(keep && Number(keep)<=max)$('tDay').value=String(keep).padStart(2,'0');
+  else $('tDay').value='';
 }
 function scheduleToMoneyCategoryName(cat){
   const map={'스튜디오':'스드메','드레스':'스드메','메이크업':'스드메','웨딩홀':'웨딩홀','예복':'예복','웨딩밴드':'웨딩밴드','신혼여행':'신혼여행','혼주':'혼주','예식준비':'예식준비','기본준비':'기타'};
@@ -451,7 +492,7 @@ function expenseDateLabel(e){
   const d=String(e.date||'');
   if(d.length===10)return d.slice(5).replace('-','.');
   if(d.length===7)return `${+d.slice(5,7)}월·미정`;
-  return '날짜 미정';
+  return '상시';
 }
 function findLinkedExpense(t){return money.expenses.find(e=>e.id===t.expenseId)||money.expenses.find(e=>e.linkedTaskId===t.id)}
 function syncTaskExpense(t){
@@ -505,9 +546,42 @@ function renderOngoing(){
   const a=tasks.filter(t=>t.status==='진행중').sort((a,b)=>taskSortKey(a).localeCompare(taskSortKey(b)));
   $('ongoing').innerHTML=a.length?a.map(t=>`<div class="task"><div class="row"><b>${esc(t.title)}</b><span class="pill">진행중</span></div><div class="muted">${esc(taskDateText(t))}${t.time?' · '+esc(t.time):''}${Number(t.expenseAmount||0)>0?' · '+won(t.expenseAmount):''}</div></div>`).join(''):'<div class="empty">진행 중인 일정이 없어요.</div>';
 }
+function renderAnytimeTasks(){
+  const a=tasks.filter(t=>taskParts(t).anytime);
+
+  $('anytimeTasks').innerHTML=`<div class="card month">
+    <div class="monthTitle" onclick="this.nextElementSibling.hidden=!this.nextElementSibling.hidden">
+      🔁 틈틈이 준비 <span class="muted">(${a.length})</span>
+    </div>
+    <div class="monthBody">
+      ${a.length?a.map(t=>`<div class="itemline" onclick="toggleDetail(this)">
+        <span>상시</span>
+        <b>${esc(t.title)}</b>
+        <select class="status" onclick="event.stopPropagation()" onchange="setStatus('${t.id}',this.value)">
+          <option ${t.status==='선택'?'selected':''}>선택</option>
+          <option ${t.status==='진행중'?'selected':''}>진행중</option>
+          <option ${t.status==='완료'?'selected':''}>완료</option>
+        </select>
+        <div class="detail" hidden>
+          <div class="detailGrid">
+            ${t.time?`<div class="detailBlock"><span class="detailLabel">시간</span><div class="detailValue">${esc(t.time)}</div></div>`:''}
+            ${t.cat?`<div class="detailBlock"><span class="detailLabel">카테고리</span><div class="detailValue">${esc(t.cat)}</div></div>`:''}
+            ${Number(t.expenseAmount||0)>0?`<div class="detailBlock"><span class="detailLabel">지출금액</span><div class="detailValue">${won(t.expenseAmount)}</div></div>`:''}
+            ${t.memo?`<div class="detailBlock full"><span class="detailLabel">메모</span><div class="detailValue detailMemo">${esc(t.memo)}</div></div>`:''}
+          </div>
+          <div class="detailActions">
+            <button class="mini" onclick="event.stopPropagation();editTask('${t.id}')">수정</button>
+            <button class="mini danger" onclick="event.stopPropagation();deleteTask('${t.id}')">삭제</button>
+          </div>
+        </div>
+      </div>`).join(''):'<div class="empty">날짜 없이 저장한 일정이 여기에 표시돼요.</div>'}
+    </div>
+  </div>`;
+}
+
 function renderMonths(){
   const g={};
-  tasks.slice().sort((a,b)=>{
+  tasks.filter(t=>!taskParts(t).anytime).slice().sort((a,b)=>{
     const pa=taskParts(a),pb=taskParts(b);
     if(pa.ym!==pb.ym)return pa.ym.localeCompare(pb.ym);
     if(!pa.day&&pb.day)return -1;
@@ -562,9 +636,8 @@ function deleteScheduleCategory(c){
 }
 function openTask(){
   editingTaskId=null;$('taskModalTitle').textContent='일정 추가';$('taskSaveBtn').textContent='저장';
-  const now=new Date();
   $('tTitle').value='';
-  populateTaskDateSelectors(now.getFullYear(),String(now.getMonth()+1).padStart(2,'0'),'');
+  populateTaskDateSelectors('','','');
   $('tTime').value='';$('tStatus').value='선택';$('tMemo').value='';$('tExpenseAmount').value='';
   $('scheduleCategoryManager').classList.remove('on');renderScheduleCats();renderTaskExpenseCategories();toggleTaskExpenseOptions();$('taskModal').style.display='flex';
 }
@@ -580,12 +653,31 @@ function editTask(tid){
   $('scheduleCategoryManager').classList.remove('on');$('taskModal').style.display='flex';
 }
 function saveTask(){
-  const title=$('tTitle').value.trim(),year=$('tYear').value,month=$('tMonth').value,day=$('tDay').value;
-  if(!title||!year||!month)return alert('제목, 년, 월을 입력해 주세요.');
-  const date=day?`${year}-${month}-${day}`:`${year}-${month}`;
+  const title=$('tTitle').value.trim();
+  const year=$('tYear').value,month=$('tMonth').value,day=$('tDay').value;
+
+  if(!title)return alert('제목을 입력해 주세요.');
+
+  const anytime=!year&&!month;
+
+  if(!anytime && (!year || !month)){
+    return alert('연도와 월은 함께 선택해 주세요.\n둘 다 선택하지 않으면 상시 일정으로 저장됩니다.');
+  }
+
+  const date=anytime?'':(day?`${year}-${month}-${day}`:`${year}-${month}`);
   const amount=Number($('tExpenseAmount').value||0);
+
   const data={
-    title,year,month,day,date,time:$('tTime').value,cat:$('tCat').value,status:$('tStatus').value,memo:$('tMemo').value,
+    title,
+    anytime,
+    year:anytime?'':year,
+    month:anytime?'':month,
+    day:anytime?'':day,
+    date,
+    time:$('tTime').value,
+    cat:$('tCat').value,
+    status:$('tStatus').value,
+    memo:$('tMemo').value,
     expenseAmount:amount>0?amount:0,
     expenseCategoryId:amount>0?$('tExpenseCategory').value:''
   };
@@ -602,7 +694,10 @@ function saveTask(){
   }
 
   if(!syncTaskExpense(t))return alert('연동된 결제수단의 잔액 문제로 저장을 취소했어요.');
-  editingTaskId=null;persist();closeM('taskModal');renderAll();
+  editingTaskId=null;
+  persist();
+  closeM('taskModal');
+  renderAll();
 }
 function deleteTask(tid){
   const t=tasks.find(x=>x.id===tid);if(!t)return;
@@ -611,6 +706,57 @@ function deleteTask(tid){
     tasks=tasks.filter(x=>x.id!==tid);persist();renderAll();
   }
 }
+function renderBudgetCategories(){
+  $('budgetCats').innerHTML=money.moneyCategories.length
+    ? money.moneyCategories.map(c=>{
+        const items=money.expenses
+          .filter(e=>e.categoryId===c.id)
+          .slice()
+          .sort((a,b)=>String(b.date||'').localeCompare(String(a.date||'')));
+
+        const details=items.length
+          ? items.map(e=>`<div class="budgetDetailRow" onclick="event.stopPropagation()">
+              <span>${esc(expenseDateLabel(e))}</span>
+              <div>
+                <b>${esc(e.title)}</b>
+                <div class="budgetDetailMeta">
+                  ${esc(sourceLabel(e))}${e.memo?' · '+esc(e.memo):''}
+                </div>
+              </div>
+              <div style="display:flex;align-items:center">
+                <strong>${won(e.amount)}</strong>
+                <span class="budgetDetailActions">
+                  <button class="mini" style="padding:3px 5px;font-size:8px" onclick="editExpense('${e.id}')">수정</button>
+                  <button class="mini danger" style="padding:3px 5px;font-size:8px" onclick="deleteExpense('${e.id}')">삭제</button>
+                </span>
+              </div>
+            </div>`).join('')
+          : '<div class="muted" style="padding:4px 0">아직 결제 내역이 없어요.</div>';
+
+        return `<div class="budgetCat" onclick="toggleBudgetCat(this)">
+          <div class="budgetCatTop">
+            <b style="font-size:10px">${esc(c.name)}</b>
+            <div>
+              <button class="mini" style="padding:4px 6px;font-size:8px"
+                onclick="event.stopPropagation();editCategoryBudget('${c.id}')">예산 수정</button>
+            </div>
+          </div>
+          <div class="budgetCatNums">
+            <div class="budgetNum">
+              <small>항목별 예산</small>
+              <strong style="font-size:9px">${won(money.categoryBudgets[c.id]||0)}</strong>
+            </div>
+            <div class="budgetNum">
+              <small>결제금액</small>
+              <strong style="font-size:9px">${won(paidByCategory(c.id))}</strong>
+            </div>
+          </div>
+          <div class="budgetCatDetail">${details}</div>
+        </div>`;
+      }).join('')
+    : '<div class="empty">분류를 추가해 주세요.</div>';
+}
+
 function toggleBudgetCat(el){el.classList.toggle('open')}
 function editCategoryBudget(cid){
   const c=money.moneyCategories.find(x=>x.id===cid);if(!c)return;const v=prompt(`${c.name} 예산`,money.categoryBudgets[cid]||0);if(v===null)return;const n=Number(String(v).replace(/,/g,''));if(!Number.isFinite(n)||n<0)return alert('금액을 숫자로 입력해 주세요.');money.categoryBudgets[cid]=n;persist();renderMoney();
@@ -718,7 +864,8 @@ function saveExpense(){
   const old=editingExpenseId?money.expenses.find(x=>x.id===editingExpenseId):null;
   let date=$('eDate').value;
   if(!date && old?.linkedTaskId)date=old.date;
-  if(!title||!date||!(amount>0))return alert('항목명, 날짜, 금액을 입력해 주세요.');
+  const linkedUndated=!!(old&&old.linkedTaskId&&!date);
+  if(!title||(!date&&!linkedUndated)||!(amount>0))return alert('항목명, 날짜, 금액을 입력해 주세요.');
 
   const sv=$('eSource').value,sourceType=sv.startsWith('account:')?'account':sv,sourceId=sourceType==='account'?sv.split(':')[1]:'';
   const data={title,categoryId:$('eCat').value,date,amount,sourceType,sourceId,memo:$('eMemo').value};
@@ -756,7 +903,7 @@ function renderMoney(){
   const spent=totalSpent(),rem=money.budget-spent;$('budgetTotal').textContent=won(money.budget);$('spent').textContent=won(spent);$('remaining').textContent=won(rem);$('budgetBar').style.width=(money.budget?Math.min(100,spent/money.budget*100):0)+'%';
   renderBudgetCategories();renderAccounts();renderExpenses();if($('allExpensePanel')&&$('allExpensePanel').style.display!=='none')renderAllExpenses();
 }
-function renderAll(){renderCal();renderOngoing();renderMonths();renderMoney();renderScheduleCats()}
+function renderAll(){renderCal();renderOngoing();renderAnytimeTasks();renderMonths();renderMoney();renderScheduleCats()}
 $('tYear').addEventListener('change',()=>updateTaskDayOptions($('tDay').value));
 $('tMonth').addEventListener('change',()=>updateTaskDayOptions($('tDay').value));
 renderAll();
