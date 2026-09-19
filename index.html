@@ -30,7 +30,7 @@ input,select,textarea{width:100%;border:1px solid var(--line);background:#fff;bo
 .authIcon{font-size:42px;margin-bottom:6px}.authCard h1{font-size:19px;margin:4px 0 8px}.authCard p{color:var(--muted);font-size:10px;margin:0 0 16px}
 .googleBtn{width:100%;border:0;background:var(--ink);color:#fff;border-radius:12px;padding:10px 12px;font-weight:800;font-size:11px}
 .authError{color:var(--danger);font-size:9px;line-height:1.5;margin-top:10px;min-height:18px}
-.authBar{display:none!important}.syncTop{font-size:9px;color:var(--muted);text-align:right;margin:0 2px 6px;line-height:1.2}.syncTop.error{color:var(--danger)}
+.authBar{display:none!important}.syncTop{font-size:9px;color:var(--muted);text-align:right;margin:0 2px 6px;line-height:1.35}.syncTop.error{color:var(--danger)}
 .authEmail{font-size:11px;font-weight:800;max-width:220px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .authUid{font-size:8px;color:var(--muted);margin-top:2px;max-width:230px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .authBtns{display:flex;gap:4px;flex-shrink:0}.syncStatus{font-size:9px;color:var(--accent);margin-top:2px}
@@ -280,10 +280,33 @@ function persist(){
   localStorage.setItem(K.money,JSON.stringify(money));
   if(remoteReady && !applyingRemote) saveCloud();
 }
-function setSyncStatus(msg){
+function formatSyncTime(ts){
+  const d=ts?new Date(ts):new Date();
+  return d.toLocaleString('ko-KR',{
+    year:'numeric',
+    month:'numeric',
+    day:'numeric',
+    hour:'numeric',
+    minute:'2-digit',
+    second:'2-digit'
+  });
+}
+function setSyncStatus(msg, markTime=false){
   const el=document.getElementById('syncStatus');
   if(!el)return;
-  el.textContent=msg;
+
+  let text=msg;
+
+  if(markTime){
+    const now=Date.now();
+    localStorage.setItem('wed_last_sync_at',String(now));
+    text=`${msg} · ${formatSyncTime(now)}`;
+  }else if(msg==='동기화 준비 중'){
+    const last=Number(localStorage.getItem('wed_last_sync_at')||0);
+    if(last)text=`마지막 동기화 · ${formatSyncTime(last)}`;
+  }
+
+  el.textContent=text;
   el.classList.toggle('error',/오류|실패|권한/.test(msg));
 }
 function cloudPayload(){
@@ -306,7 +329,7 @@ async function saveCloud(){
   try{
     setSyncStatus('저장 중…');
     await cloudDoc.set(cloudPayload());
-    setSyncStatus('동기화됨');
+    setSyncStatus('동기화됨',true);
   }catch(e){
     console.error('Firestore save error',e);
     setSyncStatus('동기화 오류');
@@ -322,7 +345,8 @@ function applyCloudData(data){
     localStorage.setItem(K.tasks,JSON.stringify(tasks));
     localStorage.setItem(K.scheduleCats,JSON.stringify(scheduleCats));
     localStorage.setItem(K.money,JSON.stringify(money));
-    renderAll();
+    setSyncStatus('동기화 준비 중');
+renderAll();
   }finally{
     applyingRemote=false;
   }
@@ -335,13 +359,13 @@ async function startCloudSync(){
       if(hasMeaningfulLocalData()){
         setSyncStatus('기존 데이터 업로드 중…');
         await cloudDoc.set(cloudPayload());
-        setSyncStatus('기존 데이터 업로드 완료');
+        setSyncStatus('기존 데이터 업로드 완료',true);
       }else{
         setSyncStatus('클라우드 데이터 대기 중');
       }
     }else{
       applyCloudData(snap.data()||{});
-      setSyncStatus('클라우드 데이터 불러옴');
+      setSyncStatus('클라우드 데이터 불러옴',true);
     }
 
     remoteReady=true;
@@ -351,14 +375,14 @@ async function startCloudSync(){
       if(!doc.exists)return;
       const data=doc.data()||{};
       applyCloudData(data);
-      setSyncStatus('동기화됨');
+      setSyncStatus('동기화됨',true);
     },e=>{
       console.error('Firestore listen error',e);
       setSyncStatus('동기화 오류');
     });
   }catch(e){
     console.error('Firestore init error',e);
-    setSyncStatus('권한/연결 오류');
+    setSyncStatus(e && e.code ? 'Firebase 오류' : '화면 처리 오류');
   }
 }
 function closeM(x){$(x).style.display='none'}
@@ -706,6 +730,9 @@ function deleteTask(tid){
     tasks=tasks.filter(x=>x.id!==tid);persist();renderAll();
   }
 }
+function moneyCatName(cid){return money.moneyCategories.find(c=>c.id===cid)?.name||'삭제된 분류'}
+function paidByCategory(cid){return money.expenses.filter(e=>e.categoryId===cid).reduce((s,e)=>s+Number(e.amount||0),0)}
+
 function renderBudgetCategories(){
   $('budgetCats').innerHTML=money.moneyCategories.length
     ? money.moneyCategories.map(c=>{
