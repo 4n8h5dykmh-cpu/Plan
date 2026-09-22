@@ -216,7 +216,7 @@ input,select,textarea{width:100%;border:1px solid var(--line);background:#fff;bo
 <label>시간 (선택)</label><input type="time" id="tTime" class="compactDateTime">
 <label>카테고리</label><div class="manageRow"><select id="tCat" onchange="autoPickMoneyCategory()"></select><button class="btn ghost" type="button" onclick="toggleScheduleCategoryManager()">관리</button></div>
 <div class="manager" id="scheduleCategoryManager"><div class="managerAdd"><input id="newScheduleCat" placeholder="새 카테고리"><button class="btn" onclick="addScheduleCategory()">추가</button></div><div class="tags" id="scheduleCatTags"></div></div>
-<label>상태</label><select id="tStatus"><option>예정</option><option>진행중</option><option>완료</option></select>
+<label>상태</label><select id="tStatus"><option>시작전</option><option>진행중</option><option>완료</option></select>
 <div class="expenseLinkBox">
   <div class="expensePaymentRow">
     <div>
@@ -371,12 +371,13 @@ migrateMoney();
 let view=new Date(),selected=null,editingTaskId=null,editingAccountId=null,editingExpenseId=null;
 
 function safeParse(s,fallback){try{return s?JSON.parse(s):fallback}catch{return fallback}}
+function isLegacyStartStatus(status){return status==='선택'||status==='예정'}
 function normalizeTaskStatuses(list){
   if(!Array.isArray(list))return false;
   let changed=false;
   for(const t of list){
-    if(t && t.status==='선택'){
-      t.status='예정';
+    if(t && isLegacyStartStatus(t.status)){
+      t.status='시작전';
       changed=true;
     }
   }
@@ -475,8 +476,8 @@ async function migrateCloudTaskStatuses(){
       const doc=await tx.get(cloudDoc);
       if(!doc.exists)return;
       const oldTasks=doc.data()?.tasks;
-      if(!Array.isArray(oldTasks) || !oldTasks.some(t=>t && t.status==='선택'))return;
-      const newTasks=oldTasks.map(t=>t && t.status==='선택' ? {...t,status:'예정'} : t);
+      if(!Array.isArray(oldTasks) || !oldTasks.some(t=>t && isLegacyStartStatus(t.status)))return;
+      const newTasks=oldTasks.map(t=>t && isLegacyStartStatus(t.status) ? {...t,status:'시작전'} : t);
       tx.update(cloudDoc,{
         tasks:newTasks,
         updatedAt:firebase.firestore.FieldValue.serverTimestamp()
@@ -500,7 +501,7 @@ async function startCloudSync(){
       }
     }else{
       applyCloudData(snap.data()||{});
-      if((snap.data()?.tasks||[]).some(t=>t && t.status==='선택')){
+      if((snap.data()?.tasks||[]).some(t=>t && isLegacyStartStatus(t.status))){
         try{await migrateCloudTaskStatuses()}catch(e){console.warn('일정 상태 이전 지연',e)}
       }
       setSyncStatus('클라우드 데이터 불러옴',true);
@@ -513,7 +514,7 @@ async function startCloudSync(){
       if(!doc.exists)return;
       const data=doc.data()||{};
       applyCloudData(data);
-      if(Array.isArray(data.tasks)&&data.tasks.some(t=>t && t.status==='선택')){
+      if(Array.isArray(data.tasks)&&data.tasks.some(t=>t && isLegacyStartStatus(t.status))){
         migrateCloudTaskStatuses().catch(e=>console.warn('일정 상태 이전 지연',e));
       }
       setSyncStatus('동기화됨',true);
@@ -896,7 +897,7 @@ function scheduleRow(t,anytime=false){
         ${t.time?`<div class="detailBlock"><span class="detailLabel">시간</span><div class="detailValue">${esc(t.time)}</div></div>`:''}
         ${t.cat?`<div class="detailBlock"><span class="detailLabel">카테고리</span><div class="detailValue">${esc(t.cat)}</div></div>`:''}
         ${t.vendor?`<div class="detailBlock"><span class="detailLabel">업체명</span><div class="detailValue">${esc(t.vendor)}</div></div>`:''}
-        <div class="detailBlock"><span class="detailLabel">상태</span><select class="status detailStatus" onclick="event.stopPropagation()" onchange="setStatus('${jsq(t.id)}',this.value)"><option ${t.status==='예정'?'selected':''}>예정</option><option ${t.status==='진행중'?'selected':''}>진행중</option><option ${t.status==='완료'?'selected':''}>완료</option></select></div>
+        <div class="detailBlock"><span class="detailLabel">상태</span><select class="status detailStatus" onclick="event.stopPropagation()" onchange="setStatus('${jsq(t.id)}',this.value)"><option ${t.status==='시작전'?'selected':''}>시작전</option><option ${t.status==='진행중'?'selected':''}>진행중</option><option ${t.status==='완료'?'selected':''}>완료</option></select></div>
         ${Number(t.expenseAmount||0)>0?`<div class="detailBlock"><span class="detailLabel">지출금액</span><div class="detailValue">${won(t.expenseAmount)}</div></div>`:''}
         ${Number(t.expenseAmount||0)>0&&taskExpenseSourceLabel(t)?`<div class="detailBlock"><span class="detailLabel">결제수단</span><div class="detailValue">${esc(taskExpenseSourceLabel(t))}</div></div>`:''}
         ${t.memo?`<div class="detailBlock full"><span class="detailLabel">메모</span><div class="detailValue detailMemo">${esc(t.memo)}</div></div>`:''}
@@ -907,9 +908,9 @@ function scheduleRow(t,anytime=false){
 }
 function renderTaskGroups(active,completed,anytime){
   const progress=active.filter(t=>t.status==='진행중').length;
-  const choice=active.filter(t=>t.status==='예정').length;
+  const choice=active.filter(t=>t.status==='시작전').length;
   const group=anytime?'anytime':'month';
-  return `<div class="scheduleSubhead"><span>해야 할 일정 · ${active.length}건</span><span class="scheduleStatusCounts">● 진행중 ${progress} &nbsp; ○ 예정 ${choice}</span></div>
+  return `<div class="scheduleSubhead"><span>해야 할 일정 · ${active.length}건</span><span class="scheduleStatusCounts">● 진행중 ${progress} &nbsp; ○ 시작전 ${choice}</span></div>
     ${active.length?scheduleColumns()+active.map(t=>scheduleRow(t,anytime)).join(''):'<div class="scheduleEmpty">해야 할 일정이 없어요.</div>'}
     <button type="button" class="completedToggle" data-completed-group="${group}" aria-expanded="false" onclick="toggleCompletedGroup('${group}')"><span>✓ 완료된 일정 · ${completed.length}건</span><span class="chevron">⌄</span></button>
     <div class="completedRows" data-completed-body="${group}" hidden>
@@ -980,7 +981,7 @@ function openTask(monthKey=''){
   }else{
     populateTaskDateSelectors('','','');
   }
-  $('tTime').value='';$('tStatus').value='예정';$('tMemo').value='';$('tExpenseAmount').value='';
+  $('tTime').value='';$('tStatus').value='시작전';$('tMemo').value='';$('tExpenseAmount').value='';
   $('scheduleCategoryManager').classList.remove('on');renderScheduleCats();renderTaskExpenseCategories();renderTaskExpenseSources();toggleTaskExpenseOptions();$('taskModal').style.display='flex';
 }
 function openTaskForMonth(ym){
@@ -993,7 +994,7 @@ function editTask(tid){
   $('tMonth').disabled=false;
   editingTaskId=tid;$('taskModalTitle').textContent='일정 수정';$('taskSaveBtn').textContent='수정 저장';
   const p=taskParts(t);
-  $('tTitle').value=t.title||'';$('tVendor').value=t.vendor||'';populateTaskDateSelectors(p.year,p.month,p.day);$('tTime').value=t.time||'';$('tStatus').value=t.status||'예정';$('tMemo').value=t.memo||'';$('tExpenseAmount').value=t.expenseAmount||'';
+  $('tTitle').value=t.title||'';$('tVendor').value=t.vendor||'';populateTaskDateSelectors(p.year,p.month,p.day);$('tTime').value=t.time||'';$('tStatus').value=t.status||'시작전';$('tMemo').value=t.memo||'';$('tExpenseAmount').value=t.expenseAmount||'';
   if(t.cat&&!scheduleCats.includes(t.cat))scheduleCats.push(t.cat);
   renderScheduleCats(t.cat||'');
   renderTaskExpenseCategories(t.expenseCategoryId||'');
