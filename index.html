@@ -12,7 +12,7 @@
 h2{font-size:14px;margin:5px 2px 9px}.btn{border:0;background:var(--ink);color:#fff;border-radius:11px;padding:9px 12px;font-weight:700}.btn.ghost{background:var(--soft);color:var(--ink)}.btn.danger{background:#f8eaea;color:var(--danger)}.mini{border:1px solid var(--line);background:#fff;border-radius:9px;padding:5px 7px;font-size:9px;color:var(--ink)}.mini.danger{color:var(--danger)}
 .calhead{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}.calhead button{border:0;background:none;font-size:22px}.week,.days{display:grid;grid-template-columns:repeat(7,1fr);text-align:center}.week{font-size:9px;color:var(--muted);margin-bottom:4px}.day{min-height:46px;padding:7px 2px;border-radius:11px;position:relative;cursor:pointer}.day.today{background:var(--soft);font-weight:800}.day.sel{outline:2px solid var(--accent)}.dot{width:5px;height:5px;border-radius:50%;background:var(--accent);position:absolute;bottom:5px;left:50%}
 .task{padding:11px 2px;border-bottom:1px solid var(--line)}.task:last-child{border:0}.status{border:0;border-radius:8px;padding:3px 6px;background:var(--soft);min-height:30px;height:30px;font-size:10px}
-.month{overflow:hidden;padding:0}.monthTitle{padding:14px 15px;cursor:pointer;font-weight:800}.monthBody{padding:0 15px 8px}.itemline{display:grid;grid-template-columns:56px 1fr auto;gap:7px;align-items:center;padding:5px 0;border-top:1px solid var(--line);cursor:pointer}.itemline.completed{background:#f1f1f1;border-radius:9px;padding-left:6px;padding-right:6px}.ongoingTask{cursor:pointer}.ongoingLine{display:grid;grid-template-columns:auto auto 1fr auto;gap:7px;align-items:center;min-width:0}.ongoingDate,.ongoingTime{font-size:9px;color:var(--muted);white-space:nowrap}.ongoingTitle{font-size:11px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.ongoingLine .pill{white-space:nowrap}.detail{grid-column:1/-1;background:#faf8f7;border-radius:11px;padding:9px;margin-top:3px;font-size:10px}.detailGrid{display:grid;grid-template-columns:1fr 1fr;gap:6px}.detailBlock{background:#fff;border:1px solid var(--line);border-radius:10px;padding:8px 9px;min-width:0}.detailBlock.full{grid-column:1/-1}.detailLabel{display:block;color:var(--muted);font-size:9px;margin-bottom:3px}.detailValue{font-size:9px;font-weight:700;line-height:1.45;word-break:break-word}.detailMemo{font-weight:500;white-space:pre-wrap}.detailActions{display:flex;gap:6px;margin-top:8px}
+.month{overflow:hidden;padding:0}.monthTitle{padding:14px 15px;cursor:pointer;font-weight:800}.monthTitleWithAdd{display:flex;align-items:center;justify-content:space-between;gap:8px}.monthTitleWithAdd .monthLabel{min-width:0}.monthAddBtn{border:1px solid var(--line);background:var(--soft);color:var(--ink);border-radius:9px;padding:5px 9px;font:inherit;font-weight:700;white-space:nowrap;cursor:pointer}.dateSelects select:disabled{background:#f5f1ef;color:var(--ink);opacity:1;-webkit-text-fill-color:var(--ink)}.monthBody{padding:0 15px 8px}.itemline{display:grid;grid-template-columns:56px 1fr auto;gap:7px;align-items:center;padding:5px 0;border-top:1px solid var(--line);cursor:pointer}.itemline.completed{background:#f1f1f1;border-radius:9px;padding-left:6px;padding-right:6px}.ongoingTask{cursor:pointer}.ongoingLine{display:grid;grid-template-columns:auto auto 1fr auto;gap:7px;align-items:center;min-width:0}.ongoingDate,.ongoingTime{font-size:9px;color:var(--muted);white-space:nowrap}.ongoingTitle{font-size:11px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.ongoingLine .pill{white-space:nowrap}.detail{grid-column:1/-1;background:#faf8f7;border-radius:11px;padding:9px;margin-top:3px;font-size:10px}.detailGrid{display:grid;grid-template-columns:1fr 1fr;gap:6px}.detailBlock{background:#fff;border:1px solid var(--line);border-radius:10px;padding:8px 9px;min-width:0}.detailBlock.full{grid-column:1/-1}.detailLabel{display:block;color:var(--muted);font-size:9px;margin-bottom:3px}.detailValue{font-size:9px;font-weight:700;line-height:1.45;word-break:break-word}.detailMemo{font-weight:500;white-space:pre-wrap}.detailActions{display:flex;gap:6px;margin-top:8px}
 input,select,textarea{width:100%;border:1px solid var(--line);background:#fff;border-radius:9px;padding:7px 9px;font-family:inherit;font-size:11px;min-height:36px}textarea{min-height:70px;resize:vertical}label{display:block;font-size:9px;color:var(--muted);margin:8px 0 3px}
 .modal{position:fixed;inset:0;background:#0005;display:none;align-items:flex-end;justify-content:center;z-index:30}.sheet{background:#fff;width:min(720px,100%);max-height:92vh;overflow:auto;border-radius:21px 21px 0 0;padding:16px 14px calc(14px + env(safe-area-inset-bottom))}.sheet h2{font-size:16px;margin:2px 0 8px}.actions{display:flex;gap:8px;margin-top:13px}.actions>*{flex:1}
 .manageRow{display:grid;grid-template-columns:1fr auto;gap:7px}.manager{display:none;margin-top:8px;background:#faf8f7;border:1px solid var(--line);border-radius:12px;padding:10px}.manager.on{display:block}.managerAdd{display:grid;grid-template-columns:1fr auto;gap:7px}.tags{display:flex;flex-wrap:wrap;gap:6px;margin-top:9px}.tag{display:flex;align-items:center;gap:3px;background:#fff;border:1px solid var(--line);border-radius:99px;padding:5px 6px 5px 9px;font-size:9px}.tag button{border:0;background:none;padding:1px 3px;color:var(--muted)}
@@ -35,6 +35,48 @@ input,select,textarea{width:100%;border:1px solid var(--line);background:#fff;bo
 .authUid{font-size:8px;color:var(--muted);margin-top:2px;max-width:230px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .authBtns{display:flex;gap:4px;flex-shrink:0}.syncStatus{font-size:9px;color:var(--accent);margin-top:2px}
 
+
+/* 일정 목록 전용: 날짜 / 제목 / 업체명 / 메모 */
+.scheduleColumns,.scheduleItem{grid-template-columns:40px minmax(0,1.05fr) minmax(0,.88fr) minmax(0,1.15fr);gap:6px}
+.scheduleColumns{display:grid;align-items:center;padding:7px 0 6px;border-top:1px solid var(--line);color:var(--muted);font-size:9px;font-weight:700}
+.scheduleItem>.scheduleCell{display:block;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:10px;line-height:1.35}
+.scheduleItem>.scheduleCell.title{font-weight:800}
+.scheduleItem>.scheduleCell.emptyCell{color:#aaa09b}
+.scheduleItem>.detail{grid-column:1/-1}
+.scheduleItem .detailStatus{height:29px;min-height:29px;padding:3px 5px;font-size:10px}
+@media(max-width:390px){.scheduleColumns,.scheduleItem{grid-template-columns:35px minmax(0,1.08fr) minmax(0,.8fr) minmax(0,1fr);gap:4px}.scheduleItem>.scheduleCell{font-size:9px}}
+
+/* 간결한 월 선택 및 진행/완료 분리 */
+.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
+.scheduleMonthPicker{margin:12px 0 10px}
+.scheduleYearBar{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:9px}
+.scheduleYearControl{display:flex;align-items:center;gap:6px}
+.scheduleYearControl button{background:#fff;border:1px solid var(--line);border-radius:9px;padding:5px 9px;color:var(--ink);font-weight:800;min-height:30px}
+.scheduleYearControl select{min-height:30px;height:30px;width:auto;padding:4px 20px 4px 8px;font-size:11px;font-weight:800;background:#fff}
+.scheduleMonthStrip{display:flex;gap:6px;overflow-x:auto;white-space:nowrap;padding:1px 1px 7px;scrollbar-width:thin;-webkit-overflow-scrolling:touch}
+.scheduleMonthChip{flex:0 0 auto;min-height:32px;border:1px solid var(--line);border-radius:10px;background:#fff;padding:6px 10px;font:inherit;color:var(--ink);cursor:pointer}
+.scheduleMonthChip strong{font-weight:800}.scheduleMonthChip small{font-size:9px;color:var(--muted);margin-left:3px}
+.scheduleMonthChip.active{background:var(--ink);border-color:var(--ink);color:#fff}
+.scheduleMonthChip.active small{color:#e9e0dc}
+.selectedMonthPanel{padding:12px 13px 10px}
+.selectedMonthHeader{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:8px}
+.selectedMonthHeader h2{margin:0;font-size:13px}
+.scheduleSubhead{display:flex;align-items:center;justify-content:space-between;gap:8px;font-size:11px;font-weight:800;padding:7px 0}
+.scheduleStatusCounts{display:flex;align-items:center;gap:8px;font-size:9px;font-weight:500;color:var(--muted)}
+.taskStateDot{display:inline-block;vertical-align:middle;width:6px;height:6px;flex:none;margin-right:5px;border-radius:50%;background:#c2afa7}
+.taskStateDot.progress{background:#6f9b7b}
+.taskStateDot.choice{background:#c3b6af}
+.scheduleItem>.scheduleCell.title{display:block}
+.completedToggle{display:flex;align-items:center;justify-content:space-between;width:100%;min-height:34px;margin-top:7px;padding:7px 10px;border:0;border-radius:9px;background:#f3f3f3;color:#56504c;text-align:left;font:inherit;font-weight:700;cursor:pointer}
+.completedToggle .chevron{transition:transform .15s ease}
+.completedToggle[aria-expanded="true"] .chevron{transform:rotate(180deg)}
+.completedRows{margin-top:5px}
+.completedRows[hidden]{display:none}
+.scheduleEmpty{padding:10px 4px 14px;color:var(--muted);font-size:10px}
+.anytimeCard{margin-bottom:12px}
+.anytimeCard .monthTitle{padding:11px 13px}
+.anytimeCard .monthBody{padding:0 13px 10px}
+@media(max-width:390px){.scheduleMonthChip{padding:6px 8px}.selectedMonthPanel{padding:11px 10px}.scheduleStatusCounts{gap:5px;font-size:8px}}
 </style>
 
 <script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-app-compat.js"></script>
@@ -76,6 +118,7 @@ input,select,textarea{width:100%;border:1px solid var(--line);background:#fff;bo
 <section id="schedule" class="page">
   <div class="top"><h1>📋 결혼 준비 일정</h1><button class="btn" onclick="openTask()">+ 추가</button></div>
   <div id="anytimeTasks"></div>
+  <div id="scheduleMonthPicker"></div>
   <div id="months"></div>
 </section>
 
@@ -116,6 +159,7 @@ input,select,textarea{width:100%;border:1px solid var(--line);background:#fff;bo
 <div class="modal" id="taskModal"><div class="sheet">
 <h2 id="taskModalTitle">일정 추가</h2>
 <label>제목</label><input id="tTitle">
+<label>업체명 (선택)</label><input id="tVendor" placeholder="예: 상담 업체 또는 예약처">
 <label>날짜</label>
 <div class="dateSelects">
   <select id="tYear"></select>
@@ -396,7 +440,15 @@ async function startCloudSync(){
   }
 }
 function closeM(x){$(x).style.display='none'}
-function showPage(pid,b){document.querySelectorAll('.page').forEach(x=>x.classList.remove('on'));$(pid).classList.add('on');document.querySelectorAll('.nav button').forEach(x=>x.classList.remove('on'));b.classList.add('on');renderAll()}
+function showPage(pid,b){
+  const returningToSchedule=pid==='schedule' && !$('schedule').classList.contains('on');
+  document.querySelectorAll('.page').forEach(x=>x.classList.remove('on'));
+  $(pid).classList.add('on');
+  document.querySelectorAll('.nav button').forEach(x=>x.classList.remove('on'));
+  b.classList.add('on');
+  renderAll();
+  if(returningToSchedule)collapseScheduleDropdowns();
+}
 
 function migrateMoney(){
   money.budget=Number(money.budget||0);
@@ -483,7 +535,8 @@ function taskSortKey(t){
 }
 function daysInMonth(y,m){return new Date(Number(y),Number(m),0).getDate()}
 function populateTaskDateSelectors(year='',month='',day=''){
-  const now=new Date(),start=now.getFullYear()-1,end=now.getFullYear()+6;
+  const now=new Date(),selectedYear=Number(year)||now.getFullYear();
+  const start=Math.min(now.getFullYear()-1,selectedYear),end=Math.max(now.getFullYear()+6,selectedYear);
 
   $('tYear').innerHTML='<option value="">연도 선택</option>'+
     Array.from({length:end-start+1},(_,i)=>start+i)
@@ -674,6 +727,8 @@ function renderOngoing(){
               <div class="detailValue">${esc(t.cat)}</div>
             </div>`:''}
 
+            ${t.vendor?`<div class="detailBlock"><span class="detailLabel">업체명</span><div class="detailValue">${esc(t.vendor)}</div></div>`:''}
+
             ${Number(t.expenseAmount||0)>0?`<div class="detailBlock">
               <span class="detailLabel">지출금액</span>
               <div class="detailValue">${won(t.expenseAmount)}</div>
@@ -698,88 +753,113 @@ function renderOngoing(){
       </div>`).join('')
     : '<div class="empty">진행 중인 일정이 없어요.</div>';
 }
-function renderAnytimeTasks(){
-  const a=tasks
-    .filter(t=>taskParts(t).anytime)
-    .slice()
-    .sort((a,b)=>{
-      const ac=a.status==='완료', bc=b.status==='완료';
-      if(ac!==bc)return ac?1:-1;
-      return 0;
-    });
-
-  $('anytimeTasks').innerHTML=`<div class="card month">
-    <div class="monthTitle" onclick="this.nextElementSibling.hidden=!this.nextElementSibling.hidden">
-      🔁 틈틈이 준비 <span class="muted">(${a.length})</span>
+let selectedScheduleYM=localDateString().slice(0,7);
+function scheduleMonthYear(){return Number(selectedScheduleYM.slice(0,4))}
+function selectScheduleYear(value){
+  const year=Number(value);
+  if(!Number.isInteger(year)||year<1900||year>2200)return;
+  selectedScheduleYM=`${year}-${selectedScheduleYM.slice(5,7)}`;
+  renderMonthPicker();renderMonths();
+}
+function stepScheduleYear(delta){selectScheduleYear(scheduleMonthYear()+delta)}
+function selectScheduleMonth(month){
+  selectedScheduleYM=`${scheduleMonthYear()}-${String(month).padStart(2,'0')}`;
+  renderMonthPicker();renderMonths();
+}
+function renderMonthPicker(){
+  const year=scheduleMonthYear(),today=localDateString().slice(0,7);
+  const taskYears=tasks.filter(t=>!taskParts(t).anytime).map(t=>Number(taskYM(t).slice(0,4))).filter(Number.isFinite);
+  const low=Math.min(new Date().getFullYear()-1,year,...taskYears);
+  const high=Math.max(new Date().getFullYear()+2,year,...taskYears);
+  const years=Array.from({length:high-low+1},(_,i)=>low+i);
+  const counts=Array.from({length:12},(_,i)=>tasks.filter(t=>taskYM(t)===`${year}-${String(i+1).padStart(2,'0')}`).length);
+  $('scheduleMonthPicker').innerHTML=`<div class="scheduleMonthPicker">
+    <div class="scheduleYearBar"><b>월별 일정</b><div class="scheduleYearControl">
+      <button type="button" aria-label="이전 연도" onclick="stepScheduleYear(-1)">‹</button>
+      <select aria-label="일정 연도 선택" onchange="selectScheduleYear(this.value)">${years.map(y=>`<option value="${y}" ${y===year?'selected':''}>${y}년</option>`).join('')}</select>
+      <button type="button" aria-label="다음 연도" onclick="stepScheduleYear(1)">›</button>
+    </div></div>
+    <div class="scheduleMonthStrip" id="scheduleMonthStrip" aria-label="월 선택">
+      ${counts.map((n,i)=>{
+        const m=String(i+1).padStart(2,'0'),key=`${year}-${m}`;
+        return `<button type="button" class="scheduleMonthChip ${key===selectedScheduleYM?'active':''}" aria-pressed="${key===selectedScheduleYM}" onclick="selectScheduleMonth(${i+1})"><strong>${i+1}월</strong>${n?`<small>${n}</small>`:''}${key===today?'<span class="sr-only"> 현재 월</span>':''}</button>`;
+      }).join('')}
     </div>
-    <div class="monthBody">
-      ${a.length?a.map(t=>`<div class="itemline ${t.status==='완료'?'completed':''}" onclick="toggleDetail(this)">
-        <span>상시</span>
-        <b>${esc(t.title)}</b>
-        <select class="status" onclick="event.stopPropagation()" onchange="setStatus('${t.id}',this.value)">
-          <option ${t.status==='선택'?'selected':''}>선택</option>
-          <option ${t.status==='진행중'?'selected':''}>진행중</option>
-          <option ${t.status==='완료'?'selected':''}>완료</option>
-        </select>
-        <div class="detail" hidden>
-          <div class="detailGrid">
-            ${t.time?`<div class="detailBlock"><span class="detailLabel">시간</span><div class="detailValue">${esc(t.time)}</div></div>`:''}
-            ${t.cat?`<div class="detailBlock"><span class="detailLabel">카테고리</span><div class="detailValue">${esc(t.cat)}</div></div>`:''}
-            ${Number(t.expenseAmount||0)>0?`<div class="detailBlock"><span class="detailLabel">지출금액</span><div class="detailValue">${won(t.expenseAmount)}</div></div>`:''}
-            ${Number(t.expenseAmount||0)>0&&taskExpenseSourceLabel(t)?`<div class="detailBlock"><span class="detailLabel">결제수단</span><div class="detailValue">${esc(taskExpenseSourceLabel(t))}</div></div>`:''}
-            ${t.memo?`<div class="detailBlock full"><span class="detailLabel">메모</span><div class="detailValue detailMemo">${esc(t.memo)}</div></div>`:''}
-          </div>
-          <div class="detailActions">
-            <button class="mini" onclick="event.stopPropagation();editTask('${t.id}')">수정</button>
-            <button class="mini danger" onclick="event.stopPropagation();deleteTask('${t.id}')">삭제</button>
-          </div>
-        </div>
-      </div>`).join(''):'<div class="empty">날짜 없이 저장한 일정이 여기에 표시돼요.</div>'}
+  </div>`;
+  const strip=$('scheduleMonthStrip');
+  const active=strip.querySelector('.active');
+  if(active)strip.scrollLeft=Math.max(0,active.offsetLeft-strip.offsetLeft-strip.clientWidth/2+active.offsetWidth/2);
+}
+function scheduleTaskSort(a,b){
+  const pa=taskParts(a),pb=taskParts(b);
+  if(!pa.day&&pb.day)return -1;
+  if(pa.day&&!pb.day)return 1;
+  return (pa.day||'').localeCompare(pb.day||'');
+}
+function scheduleColumns(){return '<div class="scheduleColumns"><span>날짜</span><span>제목</span><span>업체명</span><span>메모</span></div>'}
+function scheduleRow(t,anytime=false){
+  const done=t.status==='완료';
+  return `<div class="itemline scheduleItem ${done?'completed':''}" data-schedule-task="${esc(t.id)}" onclick="toggleDetail(this)">
+    <span class="scheduleCell">${anytime?'상시':esc(taskDayText(t))}</span>
+    <b class="scheduleCell title"><span class="taskStateDot ${t.status==='진행중'?'progress':'choice'}"></span>${esc(t.title)}</b>
+    <span class="scheduleCell ${t.vendor?'':'emptyCell'}">${t.vendor?esc(t.vendor):'—'}</span>
+    <span class="scheduleCell ${t.memo?'':'emptyCell'}">${t.memo?esc(t.memo).replace(/\s+/g,' '):'—'}</span>
+    <div class="detail" hidden>
+      <div class="detailGrid">
+        ${t.time?`<div class="detailBlock"><span class="detailLabel">시간</span><div class="detailValue">${esc(t.time)}</div></div>`:''}
+        ${t.cat?`<div class="detailBlock"><span class="detailLabel">카테고리</span><div class="detailValue">${esc(t.cat)}</div></div>`:''}
+        ${t.vendor?`<div class="detailBlock"><span class="detailLabel">업체명</span><div class="detailValue">${esc(t.vendor)}</div></div>`:''}
+        <div class="detailBlock"><span class="detailLabel">상태</span><select class="status detailStatus" onclick="event.stopPropagation()" onchange="setStatus('${jsq(t.id)}',this.value)"><option ${t.status==='선택'?'selected':''}>선택</option><option ${t.status==='진행중'?'selected':''}>진행중</option><option ${t.status==='완료'?'selected':''}>완료</option></select></div>
+        ${Number(t.expenseAmount||0)>0?`<div class="detailBlock"><span class="detailLabel">지출금액</span><div class="detailValue">${won(t.expenseAmount)}</div></div>`:''}
+        ${Number(t.expenseAmount||0)>0&&taskExpenseSourceLabel(t)?`<div class="detailBlock"><span class="detailLabel">결제수단</span><div class="detailValue">${esc(taskExpenseSourceLabel(t))}</div></div>`:''}
+        ${t.memo?`<div class="detailBlock full"><span class="detailLabel">메모</span><div class="detailValue detailMemo">${esc(t.memo)}</div></div>`:''}
+      </div>
+      <div class="detailActions"><button class="mini" onclick="event.stopPropagation();editTask('${jsq(t.id)}')">수정</button><button class="mini danger" onclick="event.stopPropagation();deleteTask('${jsq(t.id)}')">삭제</button></div>
     </div>
   </div>`;
 }
-
+function renderTaskGroups(active,completed,anytime){
+  const progress=active.filter(t=>t.status==='진행중').length;
+  const choice=active.filter(t=>t.status==='선택').length;
+  const group=anytime?'anytime':'month';
+  return `<div class="scheduleSubhead"><span>해야 할 일정 · ${active.length}건</span><span class="scheduleStatusCounts">● 진행중 ${progress} &nbsp; ○ 선택 ${choice}</span></div>
+    ${active.length?scheduleColumns()+active.map(t=>scheduleRow(t,anytime)).join(''):'<div class="scheduleEmpty">해야 할 일정이 없어요.</div>'}
+    <button type="button" class="completedToggle" data-completed-group="${group}" aria-expanded="false" onclick="toggleCompletedGroup('${group}')"><span>✓ 완료된 일정 · ${completed.length}건</span><span class="chevron">⌄</span></button>
+    <div class="completedRows" data-completed-body="${group}" hidden>
+      ${completed.length?scheduleColumns()+completed.map(t=>scheduleRow(t,anytime)).join(''):'<div class="scheduleEmpty">완료된 일정이 없어요.</div>'}
+    </div>`;
+}
+function toggleCompletedGroup(group){
+  const body=$('schedule').querySelector(`[data-completed-body="${group}"]`);
+  const btn=$('schedule').querySelector(`[data-completed-group="${group}"]`);
+  if(!body||!btn)return;
+  body.hidden=!body.hidden;
+  btn.setAttribute('aria-expanded',String(!body.hidden));
+}
+function renderAnytimeTasks(){
+  const all=tasks.filter(t=>taskParts(t).anytime);
+  const active=all.filter(t=>t.status!=='완료').sort((a,b)=>(a.status==='진행중'?0:1)-(b.status==='진행중'?0:1));
+  const completed=all.filter(t=>t.status==='완료');
+  $('anytimeTasks').innerHTML=`<div class="card month anytimeCard">
+    <div class="monthTitle" onclick="this.nextElementSibling.hidden=!this.nextElementSibling.hidden">🔁 틈틈이 준비 <span class="muted">(${all.length})</span> <span style="float:right;color:var(--muted)">⌄</span></div>
+    <div class="monthBody">${renderTaskGroups(active,completed,true)}</div>
+  </div>`;
+}
 function renderMonths(){
-  const g={};
-  tasks.filter(t=>!taskParts(t).anytime).slice().sort((a,b)=>{
-    const pa=taskParts(a),pb=taskParts(b);
-    if(pa.ym!==pb.ym)return pa.ym.localeCompare(pb.ym);
-
-    const ac=a.status==='완료', bc=b.status==='완료';
-    if(ac!==bc)return ac?1:-1;
-
-    if(!pa.day&&pb.day)return -1;
-    if(pa.day&&!pb.day)return 1;
-    return (pa.day||'').localeCompare(pb.day||'');
-  }).forEach(t=>(g[taskYM(t)]??=[]).push(t));
-
-  $('months').innerHTML=Object.keys(g).length?Object.entries(g).map(([ym,a],i)=>`<div class="card month">
-    <div class="monthTitle" onclick="this.nextElementSibling.hidden=!this.nextElementSibling.hidden">⌄ ${ym.slice(0,4)}년 ${+ym.slice(5)}월 <span class="muted">(${a.length})</span></div>
-    <div class="monthBody" ${i?'hidden':''}>
-      ${a.map(t=>`<div class="itemline ${t.status==='완료'?'completed':''}" onclick="toggleDetail(this)">
-        <span>${esc(taskDayText(t))}</span>
-        <b>${esc(t.title)}</b>
-        <select class="status" onclick="event.stopPropagation()" onchange="setStatus('${t.id}',this.value)">
-          <option ${t.status==='선택'?'selected':''}>선택</option>
-          <option ${t.status==='진행중'?'selected':''}>진행중</option>
-          <option ${t.status==='완료'?'selected':''}>완료</option>
-        </select>
-        <div class="detail" hidden>
-          <div class="detailGrid">
-            ${t.time?`<div class="detailBlock"><span class="detailLabel">시간</span><div class="detailValue">${esc(t.time)}</div></div>`:''}
-            ${t.cat?`<div class="detailBlock"><span class="detailLabel">카테고리</span><div class="detailValue">${esc(t.cat)}</div></div>`:''}
-            ${Number(t.expenseAmount||0)>0?`<div class="detailBlock"><span class="detailLabel">지출금액</span><div class="detailValue">${won(t.expenseAmount)}</div></div>`:''}
-            ${Number(t.expenseAmount||0)>0&&taskExpenseSourceLabel(t)?`<div class="detailBlock"><span class="detailLabel">결제수단</span><div class="detailValue">${esc(taskExpenseSourceLabel(t))}</div></div>`:''}
-            ${t.memo?`<div class="detailBlock full"><span class="detailLabel">메모</span><div class="detailValue detailMemo">${esc(t.memo)}</div></div>`:''}
-          </div>
-          <div class="detailActions">
-            <button class="mini" onclick="event.stopPropagation();editTask('${t.id}')">수정</button>
-            <button class="mini danger" onclick="event.stopPropagation();deleteTask('${t.id}')">삭제</button>
-          </div>
-        </div>
-      </div>`).join('')}
+  const ym=selectedScheduleYM;
+  const all=tasks.filter(t=>!taskParts(t).anytime&&taskYM(t)===ym);
+  const active=all.filter(t=>t.status!=='완료').sort((a,b)=>{
+    const pa=a.status==='진행중'?0:1,pb=b.status==='진행중'?0:1;
+    return pa-pb||scheduleTaskSort(a,b);
+  });
+  const completed=all.filter(t=>t.status==='완료').sort(scheduleTaskSort);
+  $('months').innerHTML=`<div class="card month selectedMonthPanel" data-schedule-month="${ym}">
+    <div class="selectedMonthHeader">
+      <h2>${ym.slice(0,4)}년 ${+ym.slice(5)}월 <span class="muted">· 전체 ${all.length}건</span></h2>
+      <button type="button" class="monthAddBtn" onclick="openTaskForMonth('${ym}')">+ 일정 추가</button>
     </div>
-  </div>`).join(''):'<div class="card empty">아직 등록된 일정이 없어요.</div>';
+    ${renderTaskGroups(active,completed,false)}
+  </div>`;
 }
 function toggleDetail(el){const d=el.querySelector('.detail');d.hidden=!d.hidden}
 function setStatus(tid,v){const t=tasks.find(x=>x.id===tid);if(t){t.status=v;persist();renderAll()}}
@@ -799,18 +879,34 @@ function deleteScheduleCategory(c){
   if(tasks.some(t=>t.cat===c))return alert('이 카테고리를 사용하는 일정이 있어요. 해당 일정의 카테고리를 먼저 변경해 주세요.');
   if(confirm(`"${c}" 카테고리를 삭제할까요?`)){scheduleCats=scheduleCats.filter(x=>x!==c);persist();renderScheduleCats()}
 }
-function openTask(){
+function openTask(monthKey=''){
   editingTaskId=null;$('taskModalTitle').textContent='일정 추가';$('taskSaveBtn').textContent='저장';
-  $('tTitle').value='';
-  populateTaskDateSelectors('','','');
+  $('tTitle').value='';$('tVendor').value='';
+  // The global add button leaves the date unset (evergreen task).
+  // A month-level add button preselects and locks its year/month; only day is chosen.
+  $('tYear').disabled=false;
+  $('tMonth').disabled=false;
+  if(/^\d{4}-(0[1-9]|1[0-2])$/.test(monthKey)){
+    populateTaskDateSelectors(monthKey.slice(0,4),monthKey.slice(5,7),'');
+    $('tYear').disabled=true;
+    $('tMonth').disabled=true;
+  }else{
+    populateTaskDateSelectors('','','');
+  }
   $('tTime').value='';$('tStatus').value='선택';$('tMemo').value='';$('tExpenseAmount').value='';
   $('scheduleCategoryManager').classList.remove('on');renderScheduleCats();renderTaskExpenseCategories();renderTaskExpenseSources();toggleTaskExpenseOptions();$('taskModal').style.display='flex';
 }
+function openTaskForMonth(ym){
+  selectedScheduleYM=ym;
+  openTask(ym);
+}
 function editTask(tid){
   const t=tasks.find(x=>x.id===tid);if(!t)return;
+  $('tYear').disabled=false;
+  $('tMonth').disabled=false;
   editingTaskId=tid;$('taskModalTitle').textContent='일정 수정';$('taskSaveBtn').textContent='수정 저장';
   const p=taskParts(t);
-  $('tTitle').value=t.title||'';populateTaskDateSelectors(p.year,p.month,p.day);$('tTime').value=t.time||'';$('tStatus').value=t.status||'선택';$('tMemo').value=t.memo||'';$('tExpenseAmount').value=t.expenseAmount||'';
+  $('tTitle').value=t.title||'';$('tVendor').value=t.vendor||'';populateTaskDateSelectors(p.year,p.month,p.day);$('tTime').value=t.time||'';$('tStatus').value=t.status||'선택';$('tMemo').value=t.memo||'';$('tExpenseAmount').value=t.expenseAmount||'';
   if(t.cat&&!scheduleCats.includes(t.cat))scheduleCats.push(t.cat);
   renderScheduleCats(t.cat||'');
   renderTaskExpenseCategories(t.expenseCategoryId||'');
@@ -839,6 +935,7 @@ function saveTask(){
 
   const data={
     title,
+    vendor:$('tVendor').value.trim(),
     anytime,
     year:anytime?'':year,
     month:anytime?'':month,
@@ -1307,7 +1404,57 @@ function renderMoney(){
   const spent=totalSpent(),rem=money.budget-spent;$('budgetTotal').textContent=won(money.budget);$('spent').textContent=won(spent);$('remaining').textContent=won(rem);$('budgetBar').style.width=(money.budget?Math.min(100,spent/money.budget*100):0)+'%';
   renderBudgetCategories();renderAccounts();renderExpenses();if($('allExpensePanel')&&$('allExpensePanel').style.display!=='none')renderAllExpenses();
 }
-function renderAll(){renderCal();renderOngoing();renderAnytimeTasks();renderMonths();renderMoney();renderScheduleCats()}
+function captureScheduleDropdowns(){
+  if(!$('schedule').classList.contains('on'))return null;
+  const anytimeBody=$('anytimeTasks').querySelector('.monthBody');
+  const expandedTasks=new Set();
+  $('schedule').querySelectorAll('[data-schedule-task]').forEach(row=>{
+    const detail=row.querySelector('.detail');
+    if(detail&&!detail.hidden)expandedTasks.add(row.dataset.scheduleTask);
+  });
+  return {
+    selectedYM:selectedScheduleYM,
+    anytimeOpen:!!anytimeBody&&!anytimeBody.hidden,
+    completedAnytimeOpen:!$('schedule').querySelector('[data-completed-body="anytime"]')?.hidden,
+    completedMonthOpen:!$('schedule').querySelector('[data-completed-body="month"]')?.hidden,
+    expandedTasks
+  };
+}
+function restoreScheduleDropdowns(state){
+  if(!state)return;
+  const anytimeBody=$('anytimeTasks').querySelector('.monthBody');
+  if(anytimeBody)anytimeBody.hidden=!state.anytimeOpen;
+  for(const group of ['anytime','month']){
+    const body=$('schedule').querySelector(`[data-completed-body="${group}"]`);
+    const btn=$('schedule').querySelector(`[data-completed-group="${group}"]`);
+    const open=group==='anytime'?state.completedAnytimeOpen:state.completedMonthOpen;
+    if(body)body.hidden=!open;
+    if(btn)btn.setAttribute('aria-expanded',String(!!open));
+  }
+  $('schedule').querySelectorAll('[data-schedule-task]').forEach(row=>{
+    const detail=row.querySelector('.detail');
+    if(detail)detail.hidden=!state.expandedTasks.has(row.dataset.scheduleTask);
+  });
+}
+function collapseScheduleDropdowns(){
+  // Home/Accounts -> Schedule: today's month, open evergreen tasks, completed lists collapsed.
+  selectedScheduleYM=localDateString().slice(0,7);
+  renderMonthPicker();renderMonths();
+  const anytimeBody=$('anytimeTasks').querySelector('.monthBody');
+  if(anytimeBody)anytimeBody.hidden=false;
+  for(const group of ['anytime','month']){
+    const body=$('schedule').querySelector(`[data-completed-body="${group}"]`);
+    const btn=$('schedule').querySelector(`[data-completed-group="${group}"]`);
+    if(body)body.hidden=true;
+    if(btn)btn.setAttribute('aria-expanded','false');
+  }
+  $('schedule').querySelectorAll('[data-schedule-task] .detail').forEach(el=>el.hidden=true);
+}
+function renderAll(){
+  const state=captureScheduleDropdowns();
+  renderCal();renderOngoing();renderAnytimeTasks();renderMonthPicker();renderMonths();renderMoney();renderScheduleCats();
+  restoreScheduleDropdowns(state);
+}
 $('tYear').addEventListener('change',()=>updateTaskDayOptions($('tDay').value));
 $('tMonth').addEventListener('change',()=>updateTaskDayOptions($('tDay').value));
 renderAll();
