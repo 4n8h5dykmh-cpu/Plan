@@ -124,6 +124,21 @@ input,select,textarea{width:100%;border:1px solid var(--line);background:#fff;bo
   #schedule .scheduleSubhead{gap:5px}
   #schedule .scheduleStatusCounts{font-size:10px;gap:4px}
 }
+
+/* 세 탭의 바깥 가로폭과 카드 정렬을 동일하게 고정 */
+.app{width:100%;max-width:880px}
+#home,#schedule,#money{width:100%;max-width:none;min-width:0}
+#schedule>.top,#schedule>#anytimeTasks,#schedule>#scheduleMonthPicker,#schedule>#months{width:100%;max-width:none;min-width:0}
+#schedule .anytimeCard,#schedule .selectedMonthPanel{width:100%;max-width:none;box-sizing:border-box;margin-left:0;margin-right:0}
+#schedule .selectedMonthPanel{padding:14px}
+#schedule .anytimeCard .monthBody{padding-left:14px;padding-right:14px}
+#schedule .scheduleMonthPicker,#schedule .scheduleYearBar,#schedule .scheduleMonthStrip{width:100%;max-width:none;min-width:0}
+#schedule .scheduleColumns,#schedule .scheduleItem{width:100%;max-width:none;box-sizing:border-box;grid-template-columns:44px minmax(0,1.5fr) minmax(0,1.05fr) minmax(0,1.3fr);gap:8px}
+@media(max-width:430px){
+  #schedule .selectedMonthPanel{padding:12px}
+  #schedule .anytimeCard .monthBody{padding-left:12px;padding-right:12px}
+  #schedule .scheduleColumns,#schedule .scheduleItem{grid-template-columns:36px minmax(0,1.5fr) minmax(0,.95fr) minmax(0,1.18fr);gap:5px}
+}
 </style>
 
 <script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-app-compat.js"></script>
