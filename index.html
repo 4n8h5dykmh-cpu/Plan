@@ -77,6 +77,53 @@ input,select,textarea{width:100%;border:1px solid var(--line);background:#fff;bo
 .anytimeCard .monthTitle{padding:11px 13px}
 .anytimeCard .monthBody{padding:0 13px 10px}
 @media(max-width:390px){.scheduleMonthChip{padding:6px 8px}.selectedMonthPanel{padding:11px 10px}.scheduleStatusCounts{gap:5px;font-size:8px}}
+
+/* 일정 탭 가독성: 휴대폰 가로폭을 활용하면서 글자는 충분히 크게 */
+.app{max-width:880px}
+.navin{width:min(880px,100%)}
+#schedule .top h1{font-size:18px}
+#schedule .top .btn{font-size:13px}
+#schedule .scheduleYearBar>b{font-size:14px}
+#schedule .scheduleYearControl button{font-size:14px;min-height:35px}
+#schedule .scheduleYearControl select{font-size:14px;min-height:35px;height:35px}
+#schedule .scheduleMonthChip{font-size:13px;min-height:37px;padding:8px 12px}
+#schedule .scheduleMonthChip small{font-size:11px}
+#schedule .selectedMonthPanel{padding:14px 14px 12px}
+#schedule .selectedMonthHeader h2{font-size:16px}
+#schedule .monthAddBtn{font-size:12px;min-height:34px;padding:7px 10px}
+#schedule .anytimeCard .monthTitle{font-size:15px;padding:13px 14px}
+#schedule .anytimeCard .monthBody{padding:0 14px 12px}
+#schedule .scheduleSubhead{font-size:13px;padding:10px 0}
+#schedule .scheduleStatusCounts{font-size:11px}
+#schedule .scheduleColumns,#schedule .scheduleItem{
+  grid-template-columns:48px minmax(0,1.4fr) minmax(0,1fr) minmax(0,1.1fr);
+  gap:8px;
+}
+#schedule .scheduleColumns{font-size:11px;padding:9px 0 8px}
+#schedule .scheduleItem{min-height:38px;padding:8px 0}
+#schedule .scheduleItem>.scheduleCell{font-size:13px;line-height:1.4}
+#schedule .scheduleItem>.scheduleCell.title{font-size:13px}
+#schedule .taskStateDot{width:7px;height:7px;margin-right:5px}
+#schedule .completedToggle{font-size:13px;min-height:39px}
+#schedule .scheduleEmpty{font-size:12px}
+#schedule .scheduleItem .detail{font-size:12px}
+#schedule .scheduleItem .detailLabel{font-size:11px}
+#schedule .scheduleItem .detailValue{font-size:13px}
+#schedule .scheduleItem .detailStatus{font-size:12px;min-height:34px;height:34px}
+#schedule .scheduleItem .detailActions .mini{font-size:12px}
+@media(max-width:430px){
+  #schedule .selectedMonthPanel{padding:12px 11px 10px}
+  #schedule .anytimeCard .monthBody{padding:0 11px 10px}
+  #schedule .scheduleColumns,#schedule .scheduleItem{
+    grid-template-columns:39px minmax(0,1.35fr) minmax(0,.85fr) minmax(0,1fr);
+    gap:5px;
+  }
+  #schedule .scheduleColumns{font-size:11px}
+  #schedule .scheduleItem>.scheduleCell{font-size:12px}
+  #schedule .scheduleItem>.scheduleCell.title{font-size:12px}
+  #schedule .scheduleSubhead{gap:5px}
+  #schedule .scheduleStatusCounts{font-size:10px;gap:4px}
+}
 </style>
 
 <script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-app-compat.js"></script>
@@ -169,7 +216,7 @@ input,select,textarea{width:100%;border:1px solid var(--line);background:#fff;bo
 <label>시간 (선택)</label><input type="time" id="tTime" class="compactDateTime">
 <label>카테고리</label><div class="manageRow"><select id="tCat" onchange="autoPickMoneyCategory()"></select><button class="btn ghost" type="button" onclick="toggleScheduleCategoryManager()">관리</button></div>
 <div class="manager" id="scheduleCategoryManager"><div class="managerAdd"><input id="newScheduleCat" placeholder="새 카테고리"><button class="btn" onclick="addScheduleCategory()">추가</button></div><div class="tags" id="scheduleCatTags"></div></div>
-<label>상태</label><select id="tStatus"><option>선택</option><option>진행중</option><option>완료</option></select>
+<label>상태</label><select id="tStatus"><option>예정</option><option>진행중</option><option>완료</option></select>
 <div class="expenseLinkBox">
   <div class="expensePaymentRow">
     <div>
@@ -316,6 +363,7 @@ const DEFAULT_MONEY_CATS=['스드메','웨딩홀','예복','웨딩밴드','신�
 const K={tasks:'wed_tasks_v1',money:'wed_money_v1',scheduleCats:'wed_categories_v1'};
 
 let tasks=safeParse(localStorage.getItem(K.tasks),[]);
+normalizeTaskStatuses(tasks);
 let scheduleCats=safeParse(localStorage.getItem(K.scheduleCats),DEFAULT_SCHEDULE_CATS.slice());
 let money=safeParse(localStorage.getItem(K.money),{});
 migrateMoney();
@@ -323,6 +371,18 @@ migrateMoney();
 let view=new Date(),selected=null,editingTaskId=null,editingAccountId=null,editingExpenseId=null;
 
 function safeParse(s,fallback){try{return s?JSON.parse(s):fallback}catch{return fallback}}
+function normalizeTaskStatuses(list){
+  if(!Array.isArray(list))return false;
+  let changed=false;
+  for(const t of list){
+    if(t && t.status==='선택'){
+      t.status='예정';
+      changed=true;
+    }
+  }
+  return changed;
+}
+
 function id(){return Date.now().toString(36)+Math.random().toString(36).slice(2,7)}
 function won(n){return (Number(n)||0).toLocaleString('ko-KR')+'원'}
 function localDateString(d=new Date()){return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`}
@@ -393,6 +453,7 @@ function applyCloudData(data){
   applyingRemote=true;
   try{
     tasks=Array.isArray(data.tasks)?data.tasks:[];
+    normalizeTaskStatuses(tasks);
     scheduleCats=Array.isArray(data.scheduleCats)&&data.scheduleCats.length?data.scheduleCats:DEFAULT_SCHEDULE_CATS.slice();
     money=data.money&&typeof data.money==='object'?data.money:{};
     migrateMoney();
@@ -403,6 +464,26 @@ function applyCloudData(data){
 renderAll();
   }finally{
     applyingRemote=false;
+  }
+}
+let statusMigrationInProgress=false;
+async function migrateCloudTaskStatuses(){
+  if(statusMigrationInProgress)return;
+  statusMigrationInProgress=true;
+  try{
+    await db.runTransaction(async tx=>{
+      const doc=await tx.get(cloudDoc);
+      if(!doc.exists)return;
+      const oldTasks=doc.data()?.tasks;
+      if(!Array.isArray(oldTasks) || !oldTasks.some(t=>t && t.status==='선택'))return;
+      const newTasks=oldTasks.map(t=>t && t.status==='선택' ? {...t,status:'예정'} : t);
+      tx.update(cloudDoc,{
+        tasks:newTasks,
+        updatedAt:firebase.firestore.FieldValue.serverTimestamp()
+      });
+    });
+  }finally{
+    statusMigrationInProgress=false;
   }
 }
 async function startCloudSync(){
@@ -419,6 +500,9 @@ async function startCloudSync(){
       }
     }else{
       applyCloudData(snap.data()||{});
+      if((snap.data()?.tasks||[]).some(t=>t && t.status==='선택')){
+        try{await migrateCloudTaskStatuses()}catch(e){console.warn('일정 상태 이전 지연',e)}
+      }
       setSyncStatus('클라우드 데이터 불러옴',true);
     }
 
@@ -429,6 +513,9 @@ async function startCloudSync(){
       if(!doc.exists)return;
       const data=doc.data()||{};
       applyCloudData(data);
+      if(Array.isArray(data.tasks)&&data.tasks.some(t=>t && t.status==='선택')){
+        migrateCloudTaskStatuses().catch(e=>console.warn('일정 상태 이전 지연',e));
+      }
       setSyncStatus('동기화됨',true);
     },e=>{
       console.error('Firestore listen error',e);
@@ -809,7 +896,7 @@ function scheduleRow(t,anytime=false){
         ${t.time?`<div class="detailBlock"><span class="detailLabel">시간</span><div class="detailValue">${esc(t.time)}</div></div>`:''}
         ${t.cat?`<div class="detailBlock"><span class="detailLabel">카테고리</span><div class="detailValue">${esc(t.cat)}</div></div>`:''}
         ${t.vendor?`<div class="detailBlock"><span class="detailLabel">업체명</span><div class="detailValue">${esc(t.vendor)}</div></div>`:''}
-        <div class="detailBlock"><span class="detailLabel">상태</span><select class="status detailStatus" onclick="event.stopPropagation()" onchange="setStatus('${jsq(t.id)}',this.value)"><option ${t.status==='선택'?'selected':''}>선택</option><option ${t.status==='진행중'?'selected':''}>진행중</option><option ${t.status==='완료'?'selected':''}>완료</option></select></div>
+        <div class="detailBlock"><span class="detailLabel">상태</span><select class="status detailStatus" onclick="event.stopPropagation()" onchange="setStatus('${jsq(t.id)}',this.value)"><option ${t.status==='예정'?'selected':''}>예정</option><option ${t.status==='진행중'?'selected':''}>진행중</option><option ${t.status==='완료'?'selected':''}>완료</option></select></div>
         ${Number(t.expenseAmount||0)>0?`<div class="detailBlock"><span class="detailLabel">지출금액</span><div class="detailValue">${won(t.expenseAmount)}</div></div>`:''}
         ${Number(t.expenseAmount||0)>0&&taskExpenseSourceLabel(t)?`<div class="detailBlock"><span class="detailLabel">결제수단</span><div class="detailValue">${esc(taskExpenseSourceLabel(t))}</div></div>`:''}
         ${t.memo?`<div class="detailBlock full"><span class="detailLabel">메모</span><div class="detailValue detailMemo">${esc(t.memo)}</div></div>`:''}
@@ -820,9 +907,9 @@ function scheduleRow(t,anytime=false){
 }
 function renderTaskGroups(active,completed,anytime){
   const progress=active.filter(t=>t.status==='진행중').length;
-  const choice=active.filter(t=>t.status==='선택').length;
+  const choice=active.filter(t=>t.status==='예정').length;
   const group=anytime?'anytime':'month';
-  return `<div class="scheduleSubhead"><span>해야 할 일정 · ${active.length}건</span><span class="scheduleStatusCounts">● 진행중 ${progress} &nbsp; ○ 선택 ${choice}</span></div>
+  return `<div class="scheduleSubhead"><span>해야 할 일정 · ${active.length}건</span><span class="scheduleStatusCounts">● 진행중 ${progress} &nbsp; ○ 예정 ${choice}</span></div>
     ${active.length?scheduleColumns()+active.map(t=>scheduleRow(t,anytime)).join(''):'<div class="scheduleEmpty">해야 할 일정이 없어요.</div>'}
     <button type="button" class="completedToggle" data-completed-group="${group}" aria-expanded="false" onclick="toggleCompletedGroup('${group}')"><span>✓ 완료된 일정 · ${completed.length}건</span><span class="chevron">⌄</span></button>
     <div class="completedRows" data-completed-body="${group}" hidden>
@@ -893,7 +980,7 @@ function openTask(monthKey=''){
   }else{
     populateTaskDateSelectors('','','');
   }
-  $('tTime').value='';$('tStatus').value='선택';$('tMemo').value='';$('tExpenseAmount').value='';
+  $('tTime').value='';$('tStatus').value='예정';$('tMemo').value='';$('tExpenseAmount').value='';
   $('scheduleCategoryManager').classList.remove('on');renderScheduleCats();renderTaskExpenseCategories();renderTaskExpenseSources();toggleTaskExpenseOptions();$('taskModal').style.display='flex';
 }
 function openTaskForMonth(ym){
@@ -906,7 +993,7 @@ function editTask(tid){
   $('tMonth').disabled=false;
   editingTaskId=tid;$('taskModalTitle').textContent='일정 수정';$('taskSaveBtn').textContent='수정 저장';
   const p=taskParts(t);
-  $('tTitle').value=t.title||'';$('tVendor').value=t.vendor||'';populateTaskDateSelectors(p.year,p.month,p.day);$('tTime').value=t.time||'';$('tStatus').value=t.status||'선택';$('tMemo').value=t.memo||'';$('tExpenseAmount').value=t.expenseAmount||'';
+  $('tTitle').value=t.title||'';$('tVendor').value=t.vendor||'';populateTaskDateSelectors(p.year,p.month,p.day);$('tTime').value=t.time||'';$('tStatus').value=t.status||'예정';$('tMemo').value=t.memo||'';$('tExpenseAmount').value=t.expenseAmount||'';
   if(t.cat&&!scheduleCats.includes(t.cat))scheduleCats.push(t.cat);
   renderScheduleCats(t.cat||'');
   renderTaskExpenseCategories(t.expenseCategoryId||'');
